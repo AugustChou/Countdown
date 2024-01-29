@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Countdown</title>
+  <script src="https://cdn.jsdelivr.net/npm/dayjs/dayjs.min.js"></script>
+</head>
+
+<body>
+  <div class="content">
+    <!-- 翻牌的外框 -->
+    <div class="flip down">
+      <!-- 位于前面的纸牌 -->
+      <div class="digital front" data-front></div>
+      <!-- 位于后面的纸牌 -->
+      <div class="digital back" data-back></div>
+    </div>
+  </div>
+</body>
+
+<script>
+  let isFullscreen = false
+  const body = document.querySelector('body')
+  const front = document.querySelector('.front')
+  const back = document.querySelector('.back')
+  front.setAttribute('data-front', 0)
+  back.setAttribute('data-back', 1)
+
+  body.addEventListener('dblclick', async (e) => {
+    e.preventDefault()
+    if (document.fullscreenEnabled) {
+      if (!isFullscreen) {
+        await body.requestFullscreen()
+        isFullscreen = true
+      } else {
+        await document.exitFullscreen()
+        isFullscreen = false
+      }
+    } else {
+      alert(new Error('全屏模式被禁用或者不支持'))
+    }
+  })
+</script>
+
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+  }
+
+  :fullscreen,
+  ::backdrop {
+    background-color: #212121;
+  }
+
+  body {
+    width: 100vw;
+    height: 100vh;
+    background-color: #212121;
+  }
+
+  .content {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .flip {
+    display: inline-block;
+    position: relative;
+    width: 60px;
+    height: 100px;
+    line-height: 100px;
+    border: solid 1px#000;
+    border-radius: 16px;
+    background: #fff;
+    font-size: 66px;
+    color: #fff;
+    box-shadow: 0 0 6px rgba(0, 0, 0, .7);
+    text-align: center;
+    font-family: "Helvetica Neue"
+  }
+
+  .flip .digital:before,
+  .flip .digital:after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    background: #000;
+    overflow: hidden;
+  }
+
+  .flip .digital:before {
+    top: 0;
+    bottom: 50%;
+    border-radius: 10px 10px 0 0;
+  }
+
+  .flip .digital:after {
+    top: 50%;
+    bottom: 0;
+    border-radius: 0 0 10px 10px;
+  }
+
+  .flip .digital:before,
+  .flip .digital:after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    background: #000;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+
+  .flip .digital:before {
+    top: 0;
+    bottom: 50%;
+    border-radius: 10px 10px 0 0;
+    border-bottom: solid 1px#666;
+  }
+
+  .flip .digital:after {
+    top: 50%;
+    bottom: 0;
+    border-radius: 0 0 10px 10px;
+    line-height: 0;
+  }
+
+  .flip .front:after,
+  .flip .front:before {
+    content: attr(data-front)
+  }
+
+  .flip .back:after,
+  .flip .back:before {
+    content: attr(data-back)
+  }
+
+  /*向下翻*/
+  .flip.down .front:before {
+    z-index: 3;
+  }
+
+  .flip.down .back:after {
+    z-index: 2;
+  }
+
+  .flip.down .front:after,
+  .flip.down .back:before {
+    z-index: 1;
+  }
+
+
+  .flip.down .back:after {
+    z-index: 2;
+    transform-origin: 50% 0%;
+    transform: perspective(160px) rotateX(180deg);
+  }
+
+  .flip.down.go .front:before {
+    transform-origin: 50% 100%;
+    animation: frontFlipDown 0.6s ease-in-out both;
+    box-shadow: 0-2px6px rgba(255, 255, 255, 0.3);
+  }
+
+  .flip.down.go .back:after {
+    animation: backFlipDown 0.6s ease-in-out both;
+  }
+
+  @keyframes frontFlipDown {
+    0% {
+      transform: perspective(160px) rotateX(0deg);
+    }
+
+    100% {
+      transform: perspective(160px) rotateX(-180deg);
+    }
+  }
+
+  @keyframes backFlipDown {
+    0% {
+      transform: perspective(160px) rotateX(180deg);
+    }
+
+    100% {
+      transform: perspective(160px) rotateX(0deg);
+    }
+  }
+
+
+  .flip.down.go .front:before {
+    transform-origin: 50% 100%;
+    animation: frontFlipDown 0.6s ease-in-out both;
+    box-shadow: 0-2px6px rgba(255, 255, 255, 0.3);
+    backface-visibility: hidden;
+  }
+</style>
+
+</html>
